@@ -23,14 +23,24 @@ func forslelctLoop() {
 	}
 }
 
-func forslelctLoop1() {
-	go func() {
-		for {
-			select {
-			default:
-				fmt.Println("Doing work")
-			}
+// done channel
+func dowork(done <-chan bool) {
+	for {
+		select {
+		case <-done:
+			return
+		default:
+			fmt.Println("Doing work")
 		}
-	}()
-	time.Sleep(time.Second * 4)
+	}
+}
+
+//For select loop pattern is used when parent want to close a goroutine using channels
+
+func forslelctLoop1() {
+	done := make(chan bool)
+
+	dowork(done)
+	time.Sleep(time.Second * 2)
+	close(done)
 }
